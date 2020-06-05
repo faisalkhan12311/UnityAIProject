@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.AI;
 public class EnemyFSM : MonoBehaviour
 {
-    public enum EnemyState { PATROL, CHASE, ATTACK}
+    public enum EnemyState { PATROL, CHASE, ATTACK }
     //getter for current state
-    
+
     public EnemyState CurrentState
     {
         get { return currentState; }
@@ -15,7 +15,7 @@ public class EnemyFSM : MonoBehaviour
             currentState = value;
             StopAllCoroutines();
 
-            switch (currentState) 
+            switch (currentState)
             {
                 case EnemyState.PATROL:
                     StartCoroutine(EnemyPatrol());
@@ -35,7 +35,7 @@ public class EnemyFSM : MonoBehaviour
 
 
     private CheckMyvision checkMyvision = null;
-    
+
 
     private NavMeshAgent agent = null;
 
@@ -70,12 +70,12 @@ public class EnemyFSM : MonoBehaviour
         while (currentState == EnemyState.PATROL)
         {
             checkMyvision.sensitivity = CheckMyvision.enumsensitivity.HIGH;
-            agent.isStopped = false; 
+            agent.isStopped = false;
             agent.SetDestination(patrolDestination.position);
 
             while (agent.pathPending)
                 yield return null;
-            
+
 
             if (checkMyvision.TargetinSight)
             {
@@ -88,12 +88,12 @@ public class EnemyFSM : MonoBehaviour
             }
             yield break;
         }
-        
+
 
     }
     public IEnumerator EnemyChase()
     {
-        
+
         print("Chasing");
         while (currentState == EnemyState.CHASE)
         {
@@ -107,7 +107,7 @@ public class EnemyFSM : MonoBehaviour
                 yield return null;
             }
 
-            if(agent.remainingDistance <= agent.stoppingDistance)
+            if (agent.remainingDistance <= agent.stoppingDistance)
             {
                 agent.isStopped = true;
 
@@ -116,22 +116,23 @@ public class EnemyFSM : MonoBehaviour
                     Debug.Log("Target not in sight back to patrolin");
                     CurrentState = EnemyState.PATROL;
 
-                }else
+                }
+                else
                 {
                     Debug.Log("On target so attacking");
                     CurrentState = EnemyState.ATTACK;
-                }    
-                    
+                }
+
                 yield break;
             }
             yield return null;
         }
     }
-    
+
     public IEnumerator EnemyAttack()
     {
         //yield break;
-        while(currentState == EnemyState.ATTACK)
+        while (currentState == EnemyState.ATTACK)
         {
             Debug.Log("attacking");
             //CurrentState = EnemyState.ATTACK;
@@ -140,7 +141,7 @@ public class EnemyFSM : MonoBehaviour
 
             while (agent.pathPending)
                 yield return null;
-            if(agent.remainingDistance > agent.stoppingDistance)
+            if (agent.remainingDistance > agent.stoppingDistance)
             {
                 CurrentState = EnemyState.CHASE;
                 yield break;
@@ -155,5 +156,5 @@ public class EnemyFSM : MonoBehaviour
         }
         yield break;
     }
-    
+
 }
